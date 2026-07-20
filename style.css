@@ -970,7 +970,13 @@ ul, ol { list-style: none; }
   margin-bottom: 10px;
   overflow-x: auto;
   padding-bottom: 4px;
+  /* Prevent last tab being clipped on scroll */
+  padding-right: 4px;
+  /* Hide scrollbar visually but keep scrollable */
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE/Edge */
 }
+.showcase-tabs::-webkit-scrollbar { display: none; } /* Chrome/Safari */
 
 .showcase-tab {
   flex: 1;
@@ -987,6 +993,17 @@ ul, ol { list-style: none; }
   transition: all var(--transition-fast);
   white-space: nowrap;
   text-align: center;
+  /* Ensure minimum touch target size on mobile */
+  min-width: 0;
+}
+
+/* On mobile, don't force equal widths — let tabs shrink to fit content */
+@media (max-width: 640px) {
+  .showcase-tab {
+    flex: 0 0 auto;
+    font-size: 0.7rem;
+    padding: 7px 10px;
+  }
 }
 
 .showcase-tab:hover {
