@@ -361,29 +361,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const tabs = container.querySelectorAll('.showcase-tab');
 
+    function activate(tab) {
+      // Remove active from all tabs in THIS container only
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      const imgSrc = tab.getAttribute('data-img');
+      const tagText = tab.getAttribute('data-tag');
+
+      if (imgSrc && mainImg.getAttribute('src') !== imgSrc) {
+        mainImg.style.opacity = '0.3';
+        setTimeout(() => {
+          mainImg.src = imgSrc;
+          mainImg.style.opacity = '1';
+        }, 120);
+      }
+
+      if (tagText && mainTag) {
+        mainTag.textContent = tagText;
+      }
+    }
+
     tabs.forEach(tab => {
-      const activate = () => {
-        tabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
+      // Desktop: hover preview
+      tab.addEventListener('mouseenter', () => activate(tab));
 
-        const imgSrc = tab.getAttribute('data-img');
-        const tagText = tab.getAttribute('data-tag');
+      // Both desktop & mobile: click selects
+      tab.addEventListener('click', (e) => {
+        e.stopPropagation();
+        activate(tab);
+      });
 
-        if (imgSrc && mainImg.getAttribute('src') !== imgSrc) {
-          mainImg.style.opacity = '0.3';
-          setTimeout(() => {
-            mainImg.src = imgSrc;
-            mainImg.style.opacity = '1';
-          }, 120);
-        }
-
-        if (tagText && mainTag) {
-          mainTag.textContent = tagText;
-        }
-      };
-
-      tab.addEventListener('click', activate);
-      tab.addEventListener('mouseenter', activate);
+      // Mobile: touchstart for instant response (no 300ms delay)
+      tab.addEventListener('touchstart', (e) => {
+        e.preventDefault(); // prevent scroll stealing the tap
+        activate(tab);
+      }, { passive: false });
     });
   }
 
